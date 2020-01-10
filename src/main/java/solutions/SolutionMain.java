@@ -14,7 +14,7 @@ public abstract class SolutionMain
 
   private boolean verbose = false;
 
-  public void printSolution(boolean verbose) throws IOException
+  public void printSolution(boolean verbose) throws IOException, InterruptedException
   {
     this.verbose = verbose;
     getProblem().forEach(System.out::println);
@@ -33,7 +33,7 @@ public abstract class SolutionMain
     System.out.println(solve(data));
   }
 
-  protected abstract String solve(List<String> data) throws IOException;
+  protected abstract String solve(List<String> data) throws IOException, InterruptedException;
 
   protected List<String> getData() throws IOException
   {
@@ -74,6 +74,11 @@ public abstract class SolutionMain
   protected List<Integer> convertToIntegerList(List<String> strings)
   {
     return strings.stream().map(Integer::parseInt).collect(Collectors.toList());
+  }
+
+  protected List<Long> convertToLongList(List<String> strings)
+  {
+    return strings.stream().map(Long::parseLong).collect(Collectors.toList());
   }
 
   protected void printInfo(String line)

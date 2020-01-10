@@ -1,6 +1,7 @@
 package solutions.year2019.day5;
 
 import solutions.SolutionMain;
+import solutions.year2019.day7.IntCoder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +24,10 @@ public class IntCodeCont extends SolutionMain
   {
     String[] nums = data.get(0).split(",");
     List<Integer> ints = convertToIntegerList(Arrays.asList(nums));
-    return getResult(ints);
+    IntCoder intCoder = new IntCoder(ints, true);
+    int output = (int) intCoder.process();
+    int output2 = (int) intCoder.process(5);
+    return Integer.toString(output2);
   }
 
   private String getResult(List<Integer> ints) throws IndexOutOfBoundsException
@@ -33,49 +37,50 @@ public class IntCodeCont extends SolutionMain
     while(ints.get(currentIndex) != 99)
     {
       OpCode opCode = new OpCode(ints.get(currentIndex));
-      switch(opCode.getOperation())
+      int nextIndex = currentIndex + opCode.getSize();
+      switch((int) opCode.getOperation())
       {
         case 1:
           printLine(ints, currentIndex, 4, opCode);
           int addVal = getValue(ints, currentIndex, opCode, 1) + getValue(ints, currentIndex, opCode, 2);
           ints.set(ints.get(currentIndex + 3), addVal);
-          currentIndex += 4;
           break;
         case 2:
           printLine(ints, currentIndex, 4, opCode);
           int multiplyVal = getValue(ints, currentIndex, opCode, 1) * getValue(ints, currentIndex, opCode, 2);
           ints.set(ints.get(currentIndex + 3), multiplyVal);
-          currentIndex += 4;
           break;
         case 3:
           printLine(ints, currentIndex, 2, opCode);
           ints.set(ints.get(currentIndex + 1), 5);
-          currentIndex += 2;
           break;
         case 4:
           printLine(ints, currentIndex, 2, opCode);
           outputs.add(ints.get(ints.get(currentIndex + 1)));
-          currentIndex += 2;
           break;
         case 5:
           printLine(ints, currentIndex, 3, opCode);
-          currentIndex = (getValue(ints, currentIndex, opCode, 1) != 0) ? ints.get(currentIndex + 2) : currentIndex + 3;
+          if (getValue(ints, currentIndex, opCode, 1) != 0)
+          {
+            nextIndex = getValue(ints, currentIndex, opCode, 2);
+          }
           break;
         case 6:
           printLine(ints, currentIndex, 3, opCode);
-          currentIndex = (getValue(ints, currentIndex, opCode, 1) == 0) ? ints.get(currentIndex + 2) : currentIndex + 3;
+          if (getValue(ints, currentIndex, opCode, 1) == 0)
+          {
+            nextIndex = getValue(ints, currentIndex, opCode, 2);
+          }
           break;
         case 7:
           printLine(ints, currentIndex, 4, opCode);
           int lessThanVal = (getValue(ints, currentIndex, opCode, 1) < getValue(ints, currentIndex, opCode, 2)) ? 1 : 0;
           ints.set(ints.get(currentIndex + 3), lessThanVal);
-          currentIndex += 4;
           break;
         case 8:
           printLine(ints, currentIndex, 4, opCode);
           int equalsVal = (getValue(ints, currentIndex, opCode, 1) == getValue(ints, currentIndex, opCode, 2)) ? 1 : 0;
           ints.set(ints.get(currentIndex + 3), equalsVal);
-          currentIndex += 4;
           break;
         default:
           printInfo("Oops shouldnt be here");
@@ -83,6 +88,7 @@ public class IntCodeCont extends SolutionMain
           printInfo(ints.toString());
           return "";
       }
+      currentIndex = nextIndex;
       printInfo(ints.toString());
     }
     printInfo(outputs.toString());
@@ -114,28 +120,5 @@ public class IntCodeCont extends SolutionMain
     } else {
       return ints.get(currentIndex + param);
     }
-  }
-
-
-  private String buildString(List<Integer> ints, int currentIndex)
-  {
-    StringBuilder line = new StringBuilder();
-    line.append("Current Index: ");
-    line.append(currentIndex);
-    line.append(", OpCode: ");
-    line.append(ints.get(currentIndex));
-    line.append(", Values: ");
-    line.append(ints.get(currentIndex+1));
-    line.append("(");
-    line.append(ints.get(ints.get(currentIndex+1)));
-    line.append(")");
-    line.append("-");
-    line.append(ints.get(currentIndex+2));
-    line.append("(");
-    line.append(ints.get(ints.get(currentIndex+2)));
-    line.append(")");
-    line.append(", Location: ");
-    line.append(ints.get(currentIndex+3));
-    return line.toString();
   }
 }
