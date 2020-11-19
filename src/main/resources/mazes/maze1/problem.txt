@@ -1,3 +1,0 @@
-First mazes to solve
-Example: Simple path
-Data: Loop which can be cut
