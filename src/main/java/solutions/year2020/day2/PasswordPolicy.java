@@ -16,7 +16,8 @@ public class PasswordPolicy extends SolutionMain {
 
     @Override
     protected String solve(List<String> data) throws IOException, InterruptedException {
-        return Long.toString(data.stream().map(Password::new).filter(Password::isValidPart2).count());
+        long amount = data.stream().map(Password::new).filter(Password::isValidPart2).count();
+        return Long.toString(amount);
     }
 
     private class Password {
@@ -40,7 +41,7 @@ public class PasswordPolicy extends SolutionMain {
         }
 
         boolean isValidPart2() {
-            return (code.toCharArray()[lowerAmount] == searchChar) != (code.toCharArray()[higherAmount] == searchChar);
+            return code.length() > higherAmount && ((code.toCharArray()[lowerAmount] == searchChar) != (code.toCharArray()[higherAmount] == searchChar));
         }
     }
 }
