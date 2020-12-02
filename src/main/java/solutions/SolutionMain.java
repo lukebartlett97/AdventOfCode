@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public abstract class SolutionMain
@@ -22,15 +23,42 @@ public abstract class SolutionMain
     if(exampleData != null)
     {
       System.out.println("Example Data:");
-      System.out.println(exampleData);
-      System.out.println("Solution:");
-      System.out.println(solve(exampleData));
+      printSolution(exampleData);
     }
-    List<String> data = getData();
     System.out.println("Real Data:");
+    printSolution( getData());
+  }
+
+  public void printSolution(List<String> data) throws IOException, InterruptedException {
     System.out.println(data);
     System.out.println("Solution:");
     System.out.println(solve(data));
+  }
+
+  public void timeSolution(int runs) throws IOException, InterruptedException {
+    this.verbose = verbose;
+    List<String> exampleData = getExample();
+    if(exampleData != null)
+    {
+      System.out.println("Example Data:");
+      timeSolution(exampleData, runs, "Time taken for first run: ");
+      timeSolution(exampleData, runs, "Average time taken after " + runs + " runs: ");
+    }
+    System.out.println("Real Data:");
+    timeSolution(getData(), runs, "Time taken for first run: ");
+    timeSolution(getData(), runs, "Average time taken after " + runs + " runs: ");
+  }
+
+  public void timeSolution(List<String> data, int runs, String message) throws IOException, InterruptedException {
+    ArrayList<Long> times = new ArrayList<>();
+    for(int i = 0; i < runs; i++) {
+      long startTime = System.nanoTime();
+      solve(data);
+      long endTime = System.nanoTime();
+      times.add(endTime - startTime);
+    }
+    Long total = times.stream().reduce((x, y) -> x + y).orElse(0L);
+    System.out.println(message + (total / runs) + " nanoseconds");
   }
 
   protected abstract String solve(List<String> data) throws IOException, InterruptedException;
