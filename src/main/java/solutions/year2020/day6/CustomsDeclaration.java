@@ -22,7 +22,7 @@ public class CustomsDeclaration extends SolutionMain {
     }
 
     private int allMatch(List<String> data) {
-        List<Character> chars = new ArrayList<>();
+        Set<Character> chars = new HashSet<>();
         int acc = 0;
         boolean first = true;
         for(String line : data) {
@@ -31,7 +31,7 @@ public class CustomsDeclaration extends SolutionMain {
                 chars.clear();
                 first = true;
             } else {
-                List<Character> lineList = new ArrayList<>();
+                Set<Character> lineList = new HashSet<>();
                 for(char letter : line.toCharArray()) {
                     lineList.add(letter);
                 }
