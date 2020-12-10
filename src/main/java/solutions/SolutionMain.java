@@ -29,6 +29,15 @@ public abstract class SolutionMain
     printSolution( getData());
   }
 
+  public void printExample(boolean verbose) throws IOException, InterruptedException
+  {
+    this.verbose = verbose;
+    getProblem().forEach(System.out::println);
+    List<String> exampleData = getExample();
+    System.out.println("Example Data:");
+    printSolution(exampleData);
+  }
+
   public void printSolution(List<String> data) throws IOException, InterruptedException {
     System.out.println(data);
     System.out.println("Solution:");
