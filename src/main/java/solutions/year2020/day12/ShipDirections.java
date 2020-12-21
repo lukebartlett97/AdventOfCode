@@ -14,7 +14,7 @@ public class ShipDirections extends SolutionMain {
     }
 
     @Override
-    protected String solve(List<String> data) throws IOException, InterruptedException {
+    protected String solve(List<String> data) {
         return Integer.toString(calculateDistance(data));
     }
 

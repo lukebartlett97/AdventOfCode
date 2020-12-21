@@ -13,7 +13,7 @@ public abstract class SolutionMain
 {
   private String resourcePath;
 
-  private boolean verbose = false;
+  public boolean verbose = true;
 
   public void printSolution(boolean verbose) throws IOException, InterruptedException
   {
@@ -124,5 +124,15 @@ public abstract class SolutionMain
     {
       System.out.println(line);
     }
+  }
+
+  protected void printInfo(Integer number)
+  {
+    printInfo(Integer.toString(number));
+  }
+
+  protected void printInfo(Long number)
+  {
+    printInfo(Long.toString(number));
   }
 }
