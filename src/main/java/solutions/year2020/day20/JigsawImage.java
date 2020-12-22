@@ -9,6 +9,15 @@ import java.util.stream.Collectors;
 
 public class JigsawImage extends SolutionMain {
     private String RESOURCE_PATH = "/year2020/Day20/";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
 
     public JigsawImage() {
         setResourcePath(RESOURCE_PATH);
@@ -31,7 +40,6 @@ public class JigsawImage extends SolutionMain {
         Tile image = sheet.buildFullImage();
         image.prettyPrint();
         image.removeSeaMonsters();
-        image.prettyPrint();
         return Integer.toString(image.countHashes());
     }
 
@@ -66,21 +74,21 @@ public class JigsawImage extends SolutionMain {
 
     private List<Coord> getSeaMonster() {
         List<Coord> out = new ArrayList<>();
-        out.add(new Coord(18,0));
-        out.add(new Coord(0,1));
-        out.add(new Coord(5,1));
-        out.add(new Coord(6,1));
-        out.add(new Coord(11,1));
-        out.add(new Coord(12,1));
-        out.add(new Coord(17,1));
-        out.add(new Coord(18,1));
-        out.add(new Coord(19,1));
-        out.add(new Coord(1,2));
-        out.add(new Coord(4,2));
-        out.add(new Coord(7,2));
-        out.add(new Coord(10,2));
-        out.add(new Coord(13,2));
-        out.add(new Coord(16,2));
+        out.add(new Coord(18,0, '^'));
+        out.add(new Coord(0,1, '\\'));
+        out.add(new Coord(5,1, '/'));
+        out.add(new Coord(6,1, '\\'));
+        out.add(new Coord(11,1, '/'));
+        out.add(new Coord(12,1, '\\'));
+        out.add(new Coord(17,1, '/'));
+        out.add(new Coord(18,1, 'O'));
+        out.add(new Coord(19,1, '>'));
+        out.add(new Coord(1,2, '\\'));
+        out.add(new Coord(4,2, '/'));
+        out.add(new Coord(7,2, '\\'));
+        out.add(new Coord(10,2, '/'));
+        out.add(new Coord(13,2, '\\'));
+        out.add(new Coord(16,2, '/'));
         return out;
     }
 
@@ -226,8 +234,15 @@ public class JigsawImage extends SolutionMain {
                     StringBuilder sb = new StringBuilder();
                     for(Tile tile : row) {
                         List<Character> charRow = tile.grid.get(i);
-                        for(Character character : charRow) {
-                            sb.append(character);
+                        for(int j = 0; j < charRow.size(); j++) {
+                            Character character = charRow.get(j);
+                            boolean edge = i == 0 || i == row.get(0).grid.size() - 1 || j == 0|| j == charRow.size() - 1;
+                            if(edge) {
+                                sb.append(ANSI_PURPLE).append(character).append(ANSI_RESET);
+                            } else {
+                                sb.append(ANSI_RED).append(character).append(ANSI_RESET);
+                            }
+
                         }
                         sb.append(" ");
                     }
@@ -443,16 +458,16 @@ public class JigsawImage extends SolutionMain {
             prettyPrint(new ArrayList<>());
         }
 
-        private boolean isSeaMonsterPiece(Coord coord, List<Coord> seaMonsters) {
+        private Coord isSeaMonsterPiece(Coord coord, List<Coord> seaMonsters) {
             List<Coord> offsets = getSeaMonster();
             for(Coord root : seaMonsters) {
                 for(Coord offset : offsets) {
                     if(root.y + offset.y == coord.y && root.x + offset.x == coord.x) {
-                        return true;
+                        return offset;
                     }
                 }
             }
-            return false;
+            return null;
         }
 
         private void prettyPrint(List<Coord> seaMonsters) {
@@ -462,10 +477,21 @@ public class JigsawImage extends SolutionMain {
                 List<Character> row = grid.get(y);
                 for(int x = 0; x < row.size(); x++) {
                     Character letter = row.get(x);
-                    if(isSeaMonsterPiece(new Coord(x, y), seaMonsters)) {
-                        letter = 'O';
+                    Coord monsterPiece = isSeaMonsterPiece(new Coord(x, y), seaMonsters);
+                    if(monsterPiece != null) {
+                        letter = monsterPiece.specialChar;
                     }
-                    sb.append(letter);
+                    switch(letter) {
+                        case '#':
+                            sb.append(ANSI_BLUE + '~' + ANSI_RESET);
+                            break;
+                        case '.':
+                            sb.append(ANSI_CYAN + '-' + ANSI_RESET);
+                            break;
+                        default:
+                            sb.append(ANSI_RED + letter + ANSI_RESET);
+                            break;
+                    }
                 }
                 printInfo(sb.toString());
             }
@@ -475,9 +501,16 @@ public class JigsawImage extends SolutionMain {
     private class Coord {
         int x;
         int y;
+        Character specialChar;
         Coord(int x, int y) {
             this.x = x;
             this.y = y;
+        }
+
+        Coord(int x, int y, Character specialChar) {
+            this.x = x;
+            this.y = y;
+            this.specialChar = specialChar;
         }
 
         @Override
